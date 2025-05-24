@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Управление категориями{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Категории курсов</h2>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Новая категория</h5>
+                    <form method="POST">
+                        <div class="mb-3">
+                                <input type="text" class="form-control" 
+                                       name="category_name" 
+                                       placeholder="Название категории" 
+                                       required
+                                       pattern="[\wА-Яа-яЁё\s\d]{3,50}"
+                                       title="Разрешены русские и латинские буквы, цифры и пробелы">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Создать</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Существующие категории</h5>
+                    {% if categories %}
+                    <div class="list-group">
+                        {% for category in categories %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                {{ category.name }}
+                                <small class="text-muted ms-2">{{ category.slug }}</small>
+                            </div>
+                            <div>
+                                <a href="{{ url_for('edit_category', category_id=category.id) }}" 
+                                   class="btn btn-sm btn-outline-secondary">Изменить</a>
+                                <a href="{{ url_for('delete_category', category_id=category.id) }}" 
+                                   class="btn btn-sm btn-danger"
+                                   onclick="return confirm('Удалить категорию?')">Удалить</a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">Нет созданных категорий</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

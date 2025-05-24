@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Мои курсы{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Мои курсы</h2>
+    <div class="mb-4">
+        <a href="{{ url_for('create_course') }}" class="btn btn-success">
+            + Создать новый курс
+        </a>
+    </div>
+    <div class="row">
+        {% for course in courses %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ course.title }}</h5>
+                    <p class="card-text">{{ course.description|truncate(100) }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-primary">{{ course.category }}</span>
+                        <span class="text-muted">{{ course.price }} ₽</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('course_detail', course_id=course.id) }}" 
+                           class="btn btn-primary">
+                            Управление уроками
+                        </a>
+                        <div class="d-flex gap-2">
+                            <a href="{{ url_for('edit_course', course_id=course.id) }}" 
+                               class="btn btn-outline-secondary flex-grow-1">
+                                Редактировать
+                            </a>
+                            <form method="POST" 
+                                  action="{{ url_for('delete_course', course_id=course.id) }}"
+                                  class="d-inline"
+                                  onsubmit="return confirm('Вы уверены, что хотите удалить курс?')">
+                                <button type="submit" class="btn btn-outline-danger">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">У вас пока нет созданных курсов</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Ревью задания: {{ assignment.title }}</h2>
+
+  <p><strong>Текст:</strong> {{ assignment.text or "—" }}</p>
+  {% if assignment.link %}
+    <p><strong>Ссылка:</strong> <a href="{{ assignment.link }}" target="_blank">{{ assignment.link }}</a></p>
+  {% endif %}
+  <p><strong>Статус:</strong> <span class="badge bg-info">{{ assignment.status }}</span></p>
+  
+  <p><strong>Максимальная оценка:</strong> {{ assignment.max_score }}</p>  <!-- Отображаем максимальную оценку -->
+
+  <form method="post">
+    <div class="mb-3">
+      <label for="review" class="form-label">Комментарий преподавателя:</label>
+      <textarea class="form-control" id="review" name="review" rows="4">{{ assignment.teacher_comment or '' }}</textarea>
+    </div>
+
+    <div class="mb-3">
+      <label for="grade" class="form-label">Оценка:</label>
+      <input type="number" class="form-control" id="grade" name="grade" value="{{ assignment.grade or '' }}">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+  </form>
+</div>
+{% endblock %}

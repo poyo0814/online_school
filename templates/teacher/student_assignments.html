@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">Домашние задания студента</h2>
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Задание</th>
+          <th>Текст</th>
+          <th>Ссылка</th>
+          <th>Статус</th>
+          <th>Ревью</th>
+          <th>Оценка</th>
+          <th>Действие</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in assignments %}
+        <tr>
+          <td>{{ a.title }}</td>
+          <td>{{ a.submission_text or "—" }}</td>
+          <td>
+            {% if a.submission_link %}
+              <a href="{{ a.submission_link }}" target="_blank" class="btn btn-sm btn-outline-primary">Открыть</a>
+            {% else %}
+              —
+            {% endif %}
+          </td>
+          <td>
+            {% if a.status %}
+              <span class="badge bg-info">{{ a.status }}</span>
+            {% else %}
+              <span class="badge bg-secondary">Неизвестно</span>
+            {% endif %}
+          </td>
+          <td>{{ a.teacher_comment or "Нет" }}</td>
+          <td>
+            {% if a.grade %}
+              {{ a.grade }} / {{ a.max_score }}
+            {% else %}
+              Ожидает оценки
+            {% endif %}
+          </td>
+          <td>
+            <a href="{{ url_for('review_student_assignment', assignment_id=a.assignment_id, student_id=student_id) }}" class="btn btn-sm btn-primary">
+              Редактировать
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Кнопка назад к списку студентов курса -->
+  <a href="{{ url_for('teacher_group_detail', group_id=group_id) }}" class="btn btn-secondary">
+    Назад к группе
+  </a>
+</div>
+{% endblock %}

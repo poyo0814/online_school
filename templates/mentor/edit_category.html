@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Редактирование категории{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Редактирование категории</h2>
+    <form method="POST">
+        <div class="mb-3">
+            <label class="form-label">Название</label>
+            <input type="text" class="form-control" name="name" 
+                   value="{{ category.name }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a href="{{ url_for('manage_categories') }}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}

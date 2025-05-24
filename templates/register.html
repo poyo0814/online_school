@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2 class="mb-4">Create Account</h2>
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">First Name</label>
+                <input type="text" class="form-control" name="first_name" required>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Last Name</label>
+                <input type="text" class="form-control" name="last_name" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" name="email" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-control" name="password" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Account Type</label>
+                <select class="form-select" name="user_type" required>
+                    <option value="student">Student</option>
+                    <option value="mentor">Mentor</option>
+                    <option value="teacher">Teacher</option>
+                </select>
+            </div>
+
+            <div class="mb-3 mentor-fields" style="display:none;">
+                <label class="form-label">Bio</label>
+                <textarea class="form-control" name="bio" rows="3"></textarea>
+            </div>
+
+            <div class="mb-3 teacher-fields" style="display:none;">
+                <label class="form-label">Qualifications</label>
+                <textarea class="form-control" name="qualifications" rows="3"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+    </div>
+</div>
+
+<script>
+document.querySelector('[name="user_type"]').addEventListener('change', function() {
+    document.querySelectorAll('.mentor-fields, .teacher-fields').forEach(field => {
+        field.style.display = 'none';
+    });
+    
+    if(this.value === 'mentor') {
+        document.querySelector('.mentor-fields').style.display = 'block';
+    }
+    else if(this.value === 'teacher') {
+        document.querySelector('.teacher-fields').style.display = 'block';
+    }
+});
+</script>
+{% endblock %}

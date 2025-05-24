@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Редактировать ресурс{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Редактирование ресурса</h2>
+        <a href="{{ url_for('course_detail', course_id=course.id) }}" 
+           class="btn btn-secondary">
+            ← Назад
+        </a>
+    </div>
+
+    <form method="POST">
+        <div class="mb-3">
+            <label class="form-label">Название ресурса</label>
+            <input type="text" class="form-control" 
+                   name="title" value="{{ resource.title }}" required>
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Ссылка на файл</label>
+            <input type="url" class="form-control" 
+                   name="file_url" value="{{ resource.file_url }}" required>
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Тип файла</label>
+            <select class="form-select" name="file_type" required>
+                <option value="pdf" {% if resource.file_type == 'pdf' %}selected{% endif %}>PDF</option>
+                <option value="video" {% if resource.file_type == 'video' %}selected{% endif %}>Видео</option>
+                <option value="archive" {% if resource.file_type == 'archive' %}selected{% endif %}>Архив</option>
+                <option value="image" {% if resource.file_type == 'image' %}selected{% endif %}>Изображение</option>
+                <option value="other" {% if resource.file_type == 'other' %}selected{% endif %}>Другое</option>
+            </select>
+        </div>
+
+        <input type="hidden" name="course_id" value="{{ course.id }}">
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-save"></i> Сохранить
+        </button>
+    </form>
+</div>
+{% endblock %}

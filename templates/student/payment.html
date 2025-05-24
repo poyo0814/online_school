@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Оплата курса{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Оплата курса: {{ course.title }}</h2>
+    <div class="card mb-4">
+        <div class="card-body">
+            <p><strong>Группа:</strong> №{{ group.id }}</p>
+            <p><strong>Дата начала:</strong> {{ group.start_date }}</p>
+            <p><strong>Сумма к оплате:</strong> {{ amount }} ₽</p>
+        </div>
+    </div>
+    <form method="POST">
+        <!-- здесь можно добавить поля для данных карты, если нужно -->
+        <button type="submit" class="btn btn-success">
+            Подтвердить оплату
+        </button>
+        <a href="{{ url_for('student_courses') }}" class="btn btn-secondary">
+            Отмена
+        </a>
+    </form>
+</div>
+{% endblock %}

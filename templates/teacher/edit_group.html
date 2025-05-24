@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Редактирование группы{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Редактирование группы</h2>
+    <form method="POST">
+        <div class="mb-3">
+            <label class="form-label">Название группы</label>
+            <input type="text" class="form-control" name="name" value="{{ group.name }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Курс</label>
+            <select class="form-select" name="course_id" required>
+                {% for course in courses %}
+                <option value="{{ course.id }}" {% if course.id == group.course_id %}selected{% endif %}>
+                    {{ course.title }}
+                </option>
+                {% else %}
+                <option disabled>Нет доступных курсов</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Дата начала</label>
+            <input type="date" class="form-control" name="start_date" value="{{ group.start_date }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Макс. студентов</label>
+            <input type="number" class="form-control" name="max_students" value="{{ group.max_students }}" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a href="{{ url_for('teacher_groups') }}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}

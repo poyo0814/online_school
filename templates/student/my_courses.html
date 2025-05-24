@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Мои курсы{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Мои курсы</h2>
+  <div class="row">
+    {% for course in courses %}
+      <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title">{{ course.title }}</h5>
+            <p class="card-text">{{ course.description|truncate(150) }}</p>
+          </div>
+          <div class="card-footer bg-transparent">
+            <a href="{{ url_for('student_course_detail', course_id=course.id) }}" class="btn btn-outline-primary btn-sm">Перейти к курсу</a>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <div class="col-12">
+        <div class="alert alert-info">Вы еще не приобрели ни одного курса.</div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

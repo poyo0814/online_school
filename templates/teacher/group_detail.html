@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">Группа: {{ group.name }} ({{ group.course_title }})</h2>
+
+  {% for student in students %}
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">{{ student.name }}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">{{ student.email }}</h6>
+
+        {% if student.assignments %}
+          <ul class="list-group list-group-flush">
+            {% for a in student.assignments %}
+              <li class="list-group-item">
+                <strong>{{ a.title }}</strong>:
+                {% if a.text %}<span class="text-muted">"{{ a.text|truncate(100) }}"</span>{% endif %}
+                {% if a.link %}
+                  — <a href="{{ a.link }}" target="_blank">ссылка</a>
+                {% endif %}
+                <span class="badge bg-secondary float-end">{{ a.status }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="text-muted mt-2">Нет загруженных заданий.</p>
+        {% endif %}
+
+        <a href="{{ url_for('review_student_assignments', student_id=student.id, group_id=group.id) }}" class="btn btn-sm btn-outline-primary mt-2">Подробнее</a>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

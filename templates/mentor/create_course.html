@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Создание курса{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Создать новый курс</h2>
+    
+    {% if not categories %}
+    <div class="alert alert-danger">
+        Нет доступных категорий. Сначала 
+        <a href="{{ url_for('manage_categories') }}">создайте категорию</a>.
+    </div>
+    {% else %}
+    <form method="POST">
+        <div class="mb-3">
+            <label class="form-label">Название курса *</label>
+            <input type="text" class="form-control" 
+                   name="title" required 
+                   pattern=".{3,100}" 
+                   title="От 3 до 100 символов">
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Описание *</label>
+            <textarea class="form-control" 
+                      name="description" 
+                      rows="3" 
+                      required></textarea>
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label">Цена (₽) *</label>
+                <input type="number" class="form-control" 
+                       name="price" step="0.01" 
+                       min="0" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Категория *</label>
+                <select class="form-select" name="category" required>
+                    <option value="" disabled selected>Выберите категорию</option>
+                    {% for cat_id, cat_name in categories %}
+                    <option value="{{ cat_id }}">{{ cat_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Создать</button>
+        <a href="{{ url_for('mentor_courses') }}" class="btn btn-secondary">
+            Отмена
+        </a>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}

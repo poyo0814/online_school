@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Добавить задание{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Добавить задание для урока: {{ lesson.title }}</h2>
+        <a href="{{ url_for('lesson_assignments', lesson_id=lesson.id) }}" class="btn btn-secondary">
+            ← Назад
+        </a>
+    </div>
+
+    <form method="POST">
+        <div class="mb-3">
+            <label class="form-label">Название задания</label>
+            <input type="text" class="form-control" name="title" required>
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Описание задания</label>
+            <textarea class="form-control" name="description" rows="4" required></textarea>
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Максимальный балл</label>
+            <input type="number" class="form-control" name="max_score" required>
+        </div>
+
+        <input type="hidden" name="lesson_id" value="{{ lesson.id }}">
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-plus"></i> Добавить
+        </button>
+    </form>
+</div>
+{% endblock %}

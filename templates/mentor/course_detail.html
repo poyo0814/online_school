@@ -1,0 +1,259 @@
+{# templates/mentor/course_detail.html #}
+{% extends "base.html" %}
+{% block title %}{{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Заголовок и кнопки управления -->
+    <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
+        <h1>{{ course.title }}</h1>
+        <div>
+            <a href="{{ url_for('mentor_courses') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Назад к курсам
+            </a>
+        </div>
+    </div>
+
+    <!-- Информация о курсе -->
+    <div class="card border-primary mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <h5 class="card-title">Описание курса</h5>
+                    <p class="card-text">{{ course.description or "Описание отсутствует" }}</p>
+                </div>
+                <div class="col-md-4">
+                    <div class="d-flex flex-column gap-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted">Категория:</span>
+                            <span class="badge bg-primary">{{ course.category }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted">Стоимость:</span>
+                            <span class="badge bg-success">{{ "%.2f"|format(course.price) }} ₽</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Форма создания урока -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Добавить новый урок</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('create_lesson', course_id=course.id) }}">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" name="title" 
+                               placeholder="Название урока" required>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="url" class="form-control" name="video_url" 
+                               placeholder="Ссылка на видео (YouTube)">
+                    </div>
+                    <div class="col-12">
+                        <textarea class="form-control" name="content" rows="3"
+                                  placeholder="Содержание урока" required></textarea>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Создать урок
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Список уроков -->
+    <h3 class="mb-3">Уроки курса</h3>
+    
+    {% if not lessons %}
+    <div class="alert alert-info">Пока нет добавленных уроков</div>
+    {% else %}
+    <div class="accordion" id="lessonsAccordion">
+        {% for lesson in lessons %}
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading{{ loop.index }}">
+                <button class="accordion-button collapsed" type="button" 
+                        data-bs-toggle="collapse" 
+                        data-bs-target="#collapse{{ loop.index }}" 
+                        aria-expanded="false" 
+                        aria-controls="collapse{{ loop.index }}">
+                    Урок {{ loop.index }}: {{ lesson.title }}
+                </button>
+            </h2>
+            <div id="collapse{{ loop.index }}" 
+                 class="accordion-collapse collapse" 
+                 aria-labelledby="heading{{ loop.index }}" 
+                 data-bs-parent="#lessonsAccordion">
+                <div class="accordion-body">
+                    
+                    <!-- Видео -->
+                    {% if lesson.video_url %}
+                    <div class="mb-4">
+                        <div class="ratio ratio-16x9">
+                            <iframe src="{{ lesson.video_url|replace('watch?v=', 'embed/') }}" 
+                                    allowfullscreen
+                                    class="rounded-3 shadow-sm">
+                            </iframe>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Контент урока -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Содержание урока</h5>
+                            <div class="card-text">{{ lesson.content|safe }}</div>
+                        </div>
+                    </div>
+
+                    <div class="row g-4">
+                        <!-- Ресурсы -->
+                        <div class="col-lg-6">
+                            <div class="card h-100">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <span>Ресурсы урока</span>
+                                    <a href="{{ url_for('add_resource', lesson_id=lesson.id) }}" 
+                                       class="btn btn-sm btn-success">
+                                        <i class="bi bi-plus-lg"></i> Добавить
+                                    </a>
+                                </div>
+                                <div class="card-body">
+                                    {% if lesson.resources %}
+                                    <div class="list-group">
+                                        {% for resource in lesson.resources %}
+                                        <div class="list-group-item">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="bi bi-filetype-{{ resource.file_type }} fs-4 me-3 text-primary"></i>
+                                                    <div>
+                                                        <div class="fw-medium">{{ resource.title }}</div>
+                                                        <small class="text-muted">{{ resource.file_type|upper }}</small>
+                                                    </div>
+                                                </div>
+                                                <div class="btn-group">
+                                                    <a href="{{ url_for('edit_resource', resource_id=resource.id) }}" 
+                                                       class="btn btn-sm btn-outline-primary">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                    <form method="POST" action="{{ url_for('delete_resource', resource_id=resource.id) }}">
+                                                        <button type="submit" 
+                                                                class="btn btn-sm btn-outline-danger"
+                                                                onclick="return confirm('Удалить этот ресурс?')">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    {% else %}
+                                    <div class="alert alert-info mb-0">Ресурсы отсутствуют</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Задания -->
+                        <div class="col-lg-6">
+                  <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                      <span>Задания урока</span>
+                      <a href="{{ url_for('add_assignment', lesson_id=lesson.id) }}"
+                         class="btn btn-sm btn-success">
+                        <i class="bi bi-plus-lg"></i> Добавить
+                      </a>
+                    </div>
+                    <div class="card-body">
+                      {% if lesson.assignments %}
+                        <div class="list-group">
+                          {% for asn in lesson.assignments %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                              <div>
+                                <div class="fw-medium">{{ asn.title }}</div>
+                                <small class="text-muted">
+                                  {{ asn.description|truncate(50) }}<br>
+                                  <strong>Макс. балл:</strong> {{ asn.max_score or '—' }}
+                                </small>
+                              </div>
+                              <div class="btn-group">
+                                <a href="{{ url_for('view_assignment', assignment_id=asn.id) }}"
+                                   class="btn btn-sm btn-outline-primary">
+                                  <i class="bi bi-eye"></i>
+                                </a>
+                                <form method="POST"
+                                      action="{{ url_for('delete_assignment', assignment_id=asn.id) }}">
+                                  <button type="submit"
+                                          class="btn btn-sm btn-outline-danger"
+                                          onclick="return confirm('Удалить это задание?')">
+                                    <i class="bi bi-trash"></i>
+                                  </button>
+                                </form>
+                              </div>
+                            </div>
+                          {% endfor %}
+                        </div>
+                      {% else %}
+                        <div class="alert alert-info mb-0">Задания отсутствуют</div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+                    <!-- Управление уроком -->
+                    <div class="mt-4 border-top pt-3">
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="{{ url_for('edit_lesson', lesson_id=lesson.id) }}" 
+                               class="btn btn-primary">
+                                <i class="bi bi-pencil"></i> Редактировать урок
+                            </a>
+                            <form method="POST" action="{{ url_for('delete_lesson', lesson_id=lesson.id) }}">
+                                <button type="submit" 
+                                        class="btn btn-danger"
+                                        onclick="return confirm('Вы уверены, что хотите удалить этот урок?')">
+                                    <i class="bi bi-trash"></i> Удалить урок
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.accordion-button:not(.collapsed) {
+    background-color: #f8f9fa;
+    box-shadow: none;
+}
+.accordion-body {
+    background-color: #f8f9fa;
+}
+.list-group-item {
+    transition: transform 0.2s;
+    border-radius: 0.5rem !important;
+    margin-bottom: 0.5rem;
+}
+.list-group-item:hover {
+    transform: translateX(3px);
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);
+}
+.bi-filetype-pdf { color: #d93025; }
+.bi-filetype-doc { color: #2b579a; }
+.bi-filetype-xls { color: #217346; }
+.bi-filetype-ppt { color: #d24726; }
+.bi-filetype-zip { color: #6c757d; }
+.bi-filetype-image { color: #4a86e8; }
+</style>
+{% endblock %}

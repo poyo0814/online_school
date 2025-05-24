@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Мои группы{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Мои группы</h2>
+    <div class="mb-4">
+        <a href="{{ url_for('create_group') }}" class="btn btn-success">
+            + Создать новую группу
+        </a>
+    </div>
+    <div class="row">
+        {% for group in groups %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ group.name }}</h5>
+                    <p class="card-text">Курс: {{ group.course_title }}</p>
+                    <p class="card-text">Дата начала: {{ group.start_date }}</p>
+                    <p class="card-text">Макс. студентов: {{ group.max_students }}</p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('teacher_group_detail', group_id=group.id) }}" class="btn btn-outline-primary">
+                            Студенты
+                        </a>
+                        <a href="{{ url_for('edit_group', group_id=group.id) }}" class="btn btn-outline-secondary">Редактировать</a>
+                        <form method="POST" action="{{ url_for('delete_group', group_id=group.id) }}" class="d-inline" onsubmit="return confirm('Вы уверены, что хотите удалить группу?')">
+                            <button type="submit" class="btn btn-outline-danger">
+                                Удалить
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">У вас пока нет созданных групп</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
